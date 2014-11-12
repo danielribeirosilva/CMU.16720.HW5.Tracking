@@ -1,18 +1,14 @@
-function D = genDisplacementMatrix(dataPath, n, scalesToPerturb)
-    
-    %load mean shape
-    meanShape = importdata(fullfile(dataPath, 'mean_shape.mat'));
-    %load annotated data
-    ann = load(fullfile(dataPath,'ann'));
+function D = genDisplacementMatrix(ann, perturbedConfigurations)
     
     D = [];
     
     for u = 1:size(ann, 1)
         
+        %get anotation
         singleFrameAnnotation = reshape(ann(u,2:end), 2, 5)';
         
-        %get perturbed configurations
-        perturbedConfiguration = genPerturbedConfigurations(singleFrameAnnotation, meanShape, n, scalesToPerturb);
+        %get perturbed configuration
+        perturbedConfiguration = perturbedConfigurations{u};
         perturbedConfiguration = perturbedConfiguration(1:2,:)';
         
         %displacements for this image
@@ -22,7 +18,7 @@ function D = genDisplacementMatrix(dataPath, n, scalesToPerturb)
         %adjust format
         d = d';
         d = d(:);
-        d = reshape(d,numel(d)/10,10)';
+        d = reshape(d,10,numel(d)/10)';
 
         %record
         D = [D; d];
