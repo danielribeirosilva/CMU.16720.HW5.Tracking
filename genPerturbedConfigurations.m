@@ -23,10 +23,7 @@ pertX = pertX(:)';
 pertY = repmat(muPert*randn(1,nTrue),nComponents,1);
 pertY = pertY(:)';
 
-%scale perturbations
-%pertX = pertX./finalScales;
-%pertY = pertY./finalScales;
-
+%{
 %translate mean shape to center
 translationVector = mean(singleFrameAnnotation-meanShape);
 ms = bsxfun(@plus,translationVector,meanShape);
@@ -34,6 +31,16 @@ ms = bsxfun(@plus,translationVector,meanShape);
 ms = ms*scaleA;
 centers = repmat(ms',1,nTrue);
 centers = bsxfun(@times,scalesB,centers);
+%}
+
+%translate mean shape to center
+scaledMeanShape = repmat(meanShape',1,nTrue);
+scaledMeanShape = scaledMeanShape*scaleA;
+scaledMeanShape = bsxfun(@times,scalesB,scaledMeanShape);
+%translate mean shape to center
+translationVector = mean(singleFrameAnnotation-meanShape);
+centers = bsxfun(@plus,translationVector',scaledMeanShape);
+
 
 %perturbed configurations
 perturbedConfiguration = zeros(4,nTrue*nComponents);
