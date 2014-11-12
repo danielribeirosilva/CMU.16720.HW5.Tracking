@@ -43,7 +43,7 @@ function runPoohInfo
 
 		% Draw ground truth locations
 		now_ann = reshape(ann(u, 2:end), 2, 5)';
-			plot(now_ann(:, 1), now_ann(:, 2), 'r+', 'MarkerSize', 15, 'LineWidth', 3);
+		plot(now_ann(:, 1), now_ann(:, 2), 'r+', 'MarkerSize', 15, 'LineWidth', 3);
 
 		title(sprintf('training data at frame %d, with sift extracted, press any key to continue', ann(u, 1)));
 		hold off;
