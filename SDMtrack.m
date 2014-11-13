@@ -17,12 +17,27 @@ function SDMtrack(models, mean_shape, start_location, start_frame, outvidfile)
 	open(vidout);
 
     % ADD YOUR CODE HERE
+    
+    %--------------------------------------------------------------
+    %--------------------------------------------------------------
+    
+    nModels = size(models,2)/10;
+    
+    %find and apply scale to mean shape
+    scale = findscale(start_location, mean_shape);
+    scaledMeanShape = mean_shape/scale;
+    
+    %translate mean shape to center
+    translationVector = mean(start_location-scaledMeanShape);
+    centers = bsxfun(@plus,translationVector,scaledMeanShape);
+    
+    %--------------------------------------------------------------
+    %--------------------------------------------------------------
+    
+    %initialize
+	current_shape = centers;    
 
-        %These two lines are only here to let runTrackWinnie without errors when you have not modified this file yet. Feel free to delete them once you started modifying this file.
-	begin_shape = start_location;    
-	current_shape = start_location;    
-
-	for iFrm = start_frame:3000
+	for iFrm = start_frame:1500
 		% Load testing image
 		I = imread(sprintf('data/pooh/testing/image-%04d.jpg', iFrm));
 
@@ -31,6 +46,45 @@ function SDMtrack(models, mean_shape, start_location, start_frame, outvidfile)
         %     column indicates x-coordinate, and 2nd column indicates y-coordinate).
         % Store your final guess as a 5x2 matrix named current_shape (in the same format as begin_shape)
 
+        
+        %--------------------------------------------------------------
+        %--------------------------------------------------------------
+        
+        %start where last frame ended
+        begin_shape = current_shape;
+        
+        %apply linear all mappings consecutively
+        for iMap = 1:nModels
+            
+            %generate SIFT features
+            fc = [current_shape'; [7 4 4 10 10]/scale; zeros(1,5)];
+            f = siftwrapper(I, fc);
+            %normalize
+            %norms = diag(sqrt(f'*f));
+            %f = bsxfun(@ldivide,norms',f);
+
+            %reshape (1-by-640)
+            f = f(:)';
+            f = reshape(f,640,1)';
+            
+            %get current model
+            modelIdx = (1+(iMap-1)*10):(iMap*10);
+            model = models(:,modelIdx);
+            
+            %compute displacement
+            d = f*model;
+            %reshape
+            d = reshape(d,2,5)';
+            
+            %apply displacement
+            current_shape = current_shape + d;
+            
+        end
+        
+        
+        %--------------------------------------------------------------
+        %--------------------------------------------------------------
+        
         
 
 		% Draw tracked location of parts
