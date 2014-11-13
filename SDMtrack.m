@@ -37,7 +37,7 @@ function SDMtrack(models, mean_shape, start_location, start_frame, outvidfile)
     %initialize
 	current_shape = centers;    
 
-	for iFrm = start_frame:1500
+	for iFrm = start_frame:2000
 		% Load testing image
 		I = imread(sprintf('data/pooh/testing/image-%04d.jpg', iFrm));
 

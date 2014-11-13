@@ -16,8 +16,8 @@ function models = SDMtrain(mean_shape, annotations)
     
     %params
     dataPath = 'data/pooh';
-    scalesToPerturb = [0.8 1 1.2];
-    n = 200;
+    scalesToPerturb = [0.6 0.8 1 1.2 1.4];
+    n = 300;
     nFrms = size(annotations, 1);
     perturbedConfigurations = cell(1,nFrms);
     nMappings = 5;
