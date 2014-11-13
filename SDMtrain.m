@@ -17,7 +17,7 @@ function models = SDMtrain(mean_shape, annotations)
     %params
     dataPath = 'data/pooh';
     scalesToPerturb = [0.8 1 1.2];
-    n = 100;
+    n = 200;
     nFrms = size(annotations, 1);
     perturbedConfigurations = cell(1,nFrms);
     nMappings = 5;
@@ -45,7 +45,7 @@ function models = SDMtrain(mean_shape, annotations)
         
         models = [models W];
         
-        fprintf('loss function: %d\n', sum(D(:)));
+        fprintf('loss function: %d\n', norm(D(:)));
     end
     
     

@@ -7,7 +7,7 @@ function perturbedConfiguration = genPerturbedConfigurations(singleFrameAnnotati
 
 %params
 nComponents = 5;
-muPert = 5; %in pixels
+muPert = 4; %in pixels
 nScales = numel(scalesToPerturb);
 nPert = ceil(n/nScales);
 nTrue = nPert*nScales;
@@ -33,12 +33,12 @@ centers = repmat(ms',1,nTrue);
 centers = bsxfun(@times,scalesB,centers);
 %}
 
-%translate mean shape to center
+%scale mean shape
 scaledMeanShape = repmat(meanShape',1,nTrue);
-scaledMeanShape = scaledMeanShape*scaleA;
+scaledMeanShape = scaledMeanShape/scaleA;
 scaledMeanShape = bsxfun(@times,scalesB,scaledMeanShape);
 %translate mean shape to center
-translationVector = mean(singleFrameAnnotation-meanShape);
+translationVector = mean(singleFrameAnnotation-(meanShape/scaleA));
 centers = bsxfun(@plus,translationVector',scaledMeanShape);
 
 
@@ -49,6 +49,6 @@ perturbedConfiguration(1,:) = centers(1,:) + pertX;
 %row 2
 perturbedConfiguration(2,:) = centers(2,:) + pertY;
 %row 3
-perturbedConfiguration(3,:) = repmat([7 4 4 10 10],1,nTrue)./(scaleA*scalesB);
+perturbedConfiguration(3,:) = repmat([7 4 4 10 10],1,nTrue)./(scalesB/scaleA);
 
 end
