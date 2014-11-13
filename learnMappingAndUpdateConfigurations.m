@@ -19,7 +19,15 @@ function [updatedConfigurations, W] = learnMappingAndUpdateConfigurations(D,F,pe
         idx = (n*(u-1) + 1):(n*u);
         f = F(idx,:);
         d = f*W;
-        updatedConfigurations{u} = pConf + d;
+        pConf = pConf + d;
+        
+        %reshape
+        pConf = pConf';
+        pConf = pConf(:);
+        pConf = reshape(pConf,2,numel(pConf)/2);
+        
+        %restore format and store
+        updatedConfigurations{u} = [pConf; perturbedConfigurations{u}(3:4,:)];
         
     end
     
