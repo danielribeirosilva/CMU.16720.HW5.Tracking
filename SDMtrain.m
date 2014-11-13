@@ -11,6 +11,46 @@ function models = SDMtrain(mean_shape, annotations)
 %   models:        The models that you will use in SDMtrack for tracking
 %
 
-% ADD YOUR CODE HERE
 	models = [];
+    
+    
+    %params
+    dataPath = 'data/pooh';
+    scalesToPerturb = [0.8 1 1.2];
+    n = 100;
+    nFrms = size(annotations, 1);
+    perturbedConfigurations = cell(1,nFrms);
+    nMappings = 5;
+
+    %generate all initial perturbed configurations
+    for u = 1:nFrms
+
+            singleFrameAnnotation = reshape(annotations(u,2:end), 2, 5)';
+
+            %get perturbed configurations
+            perturbedConfigurations{u} = genPerturbedConfigurations(singleFrameAnnotation, mean_shape, n, scalesToPerturb);
+    end
+    
+    
+    for i = 1:nMappings
+        
+        %get displacement matrix
+        D = genDisplacementMatrix(annotations, perturbedConfigurations);
+        
+        %get feature matrix
+        F = genFeatureMatrix(dataPath, annotations, perturbedConfigurations);
+        
+        %lear mapping and update perturbations
+        [perturbedConfigurations, W] = learnMappingAndUpdateConfigurations(D,F,perturbedConfigurations);
+        
+        models = [models W];
+        
+        fprintf('loss function: %d\n', sum(D(:)));
+    end
+    
+    
+    
+    
+    
+    
 end
